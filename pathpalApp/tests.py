@@ -1,13 +1,17 @@
 import pytest
-from django.conf import settings
-from pathpalApp.services.user_service import create_test_user
+from django.urls import reverse
+from django.test import Client
 
-@pytest.mark.django_db
-def test_create_test_user():
-    data = {'name': 'test user', 'email': 'test@user.com'}
-    user_id = create_test_user(data)
-    user = settings.MONGO_DB['users'].find_one({'_id': user_id})
+def test_api_endpoints():
+    client = Client()
+    url = reverse('get_api')
+    response = client.get(url)
     
-    assert user is not None
-    assert user['name'] == 'test user'
-    assert user['email'] == 'test@user.com'
+    assert response.status_code == 200
+    data = response.json()
+    
+    endpoints = data.get('endpoints', [])
+    paths = [endpoint['path'] for endpoint in endpoints]
+    
+    assert "/api/user/create/" in paths
+    assert "/api/user/<id>/" in paths

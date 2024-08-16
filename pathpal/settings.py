@@ -35,8 +35,8 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default="", cast=lambda v: [s.strip() fo
 
 # MongoDB settings
 MONGO_DB_NAME = config('DB_NAME')
-MONGO_CLIENT = MongoClient(f"mongodb://{config('DB_HOST')}:{config('DB_PORT')}/")
-MONGO_DB = MONGO_CLIENT[MONGO_DB_NAME]  # Corrected line
+MONGO_CLIENT = MongoClient("mongodb+srv://danieljtaylor153:JB8bZmWpDHwY1mZg@pathpal.vqkdj.mongodb.net/")
+MONGO_DB = MONGO_CLIENT[MONGO_DB_NAME]  
 
 # Application definition
 

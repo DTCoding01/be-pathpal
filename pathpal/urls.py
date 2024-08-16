@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from pathpalApp.views import create_user
+from pathpalApp.views import create_user, test_mongo_connection
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/create/', create_user, name="create_user")
+    path('user/create/', create_user, name="create_user"),
+    path('test-mongodb', test_mongo_connection, name="test_mongo"),
 ]

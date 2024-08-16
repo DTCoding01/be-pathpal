@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from pathpalApp.views import create_user, test_mongo_connection
+from pathpalApp.views.enpoints_views import get_api
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/create/', create_user, name="create_user"),
-    path('test-mongodb', test_mongo_connection, name="test_mongo"),
+    path('api/', get_api, name="get_api"),
 ]

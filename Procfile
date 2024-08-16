@@ -1,0 +1,1 @@
+web: gunicorn pathpal.wsgi --log-file -

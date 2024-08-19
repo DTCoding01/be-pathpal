@@ -44,8 +44,9 @@ DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # MongoDB settings
-MONGO_DB_NAME = config('DB_NAME')
-MONGO_CLIENT = MongoClient("mongodb+srv://danieljtaylor153:JB8bZmWpDHwY1mZg@pathpal.vqkdj.mongodb.net/")
+MONGO_DB_NAME = config('MONGO_DB_NAME')
+MONGO_URI = config('MONGO_URI')
+MONGO_CLIENT = MongoClient(MONGO_URI)
 MONGO_DB = MONGO_CLIENT[MONGO_DB_NAME]  
 
 # Application definition

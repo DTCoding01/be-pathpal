@@ -1,6 +1,7 @@
 asgiref==3.8.1
 dj-database-url==2.2.0
 Django==5.1
+djangorestframework==3.15.2
 dnspython==2.6.1
 gunicorn==23.0.0
 iniconfig==2.0.0

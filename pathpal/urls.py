@@ -20,6 +20,6 @@ from pathpalApp.views.enpoints_views import get_api
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('api/', get_api, name="get_api"),
 ]

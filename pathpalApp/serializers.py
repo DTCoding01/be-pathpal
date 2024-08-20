@@ -1,9 +1,19 @@
 from rest_framework import serializers
+from bson import ObjectId
 
-# these convert MongoDB data into a dictionary
+class ObjectIdField(serializers.Field):
+    """Custom field to handle MongoDB ObjectId serialization and deserialization."""
+    def to_representation(self, value):
+        return str(value) if isinstance(value, ObjectId) else value
+
+    def to_internal_value(self, data):
+        try:
+            return ObjectId(data)
+        except (TypeError, ValueError):
+            raise serializers.ValidationError("Invalid ObjectId")
 
 class ThreeDModelSerializer(serializers.Serializer):
-    id = serializers.CharField(source='_id')
+    id = ObjectIdField(source='_id')
     name = serializers.CharField()
     obj_file = serializers.CharField()
     mtl_file = serializers.CharField(allow_null=True)
@@ -12,6 +22,7 @@ class ThreeDModelSerializer(serializers.Serializer):
     updated_at = serializers.DateTimeField()
 
 class UserSerializer(serializers.Serializer):
+    id = ObjectIdField(source='_id', read_only=True)
     name = serializers.CharField()
     email = serializers.EmailField()
     step_details = serializers.DictField()
@@ -24,4 +35,3 @@ class UserSerializer(serializers.Serializer):
         if 'selected_pet' in data:
             data['pet_details'] = {'selected_pet': data.pop('selected_pet')}
         return super().to_internal_value(data)
-    

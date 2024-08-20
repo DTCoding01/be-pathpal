@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Alice Smith",
+        "email": "alice@example.com",
+        "step_goal": 10000,
+        "selected_pet": "Dog"
+    },
+    {
+        "name": "Bob Jones",
+        "email": "bob@example.com",
+        "step_goal": 8000,
+        "selected_pet": "Dog"
+    },
+    {
+        "name": "Charlie Brown",
+        "email": "charlie@example.com",
+        "step_goal": 12000,
+        "selected_pet": "Dog"
+    }
+]

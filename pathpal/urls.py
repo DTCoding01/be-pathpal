@@ -24,6 +24,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('api/', get_api, name="get_api"),
     path('api/3d-models/', ThreeDModelListView.as_view(), name="three_d_model_list"),
+    path('api/3d-models/<str:name>', ThreeDModelListView.as_view(), name="three_d_model_by_name"),
     path('api/users/', UserView.as_view(), name="user-view"),    
     path('api/users/<str:email>/', UserGetByEmailView.as_view(), name="user-by-email"),
 

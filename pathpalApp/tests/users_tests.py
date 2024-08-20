@@ -28,7 +28,7 @@ def api_client():
 
 class TestUserAPI:
     def test_create_user(self, api_client, db_connection):
-        url = reverse('user-create')
+        url = reverse('user-view')
         new_user_data = {
             "name": "Alice Smith",
             "email": "alice.smith@example.com",
@@ -52,11 +52,25 @@ class TestUserAPI:
             "collected_items": []
         })
 
-        url = reverse('user-list')
+        url = reverse('user-view')
         response = api_client.get(url)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 1
         assert response.data[0]['name'] == "Alice Smith"
+        
+    def test_get_user_by_email(self, api_client, db_connection):
+        db_connection.insert_one({
+            "name": "Alice Smith",
+            "email": "alice.smith@example.com",
+            "step_details": {'step_goal': 12000},
+            "pet_details": {'selected_pet': "Bird"},
+            "collected_items": []
+        })
+        
+        url = reverse('user-by-email', kwargs={'email': 'alice.smith@example.com'})
+        response = api_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['name'] == "Alice Smith"
 
 def test_mongodb_connection():
     client = MongoClient(settings.MONGO_URI)

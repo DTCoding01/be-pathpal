@@ -1,11 +1,16 @@
 from pymongo import MongoClient
 from django.conf import settings
 import logging 
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 class MongoDBClient:
     _client = None
+    
+    @staticmethod
+    def get_db_name():
+        return settings.MONGO_DB_NAME
 
     @classmethod
     def get_client(cls):

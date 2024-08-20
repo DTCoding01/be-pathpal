@@ -22,7 +22,7 @@ class ThreeDModelListView(APIView):
             serializer = ThreeDModelSerializer(models, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        except Exception as e:
+        except Exception:
             return Response(
                 {"error": "An error occurred while retrieving 3D models."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -33,10 +33,10 @@ class ThreeDModelListView(APIView):
 class ThreeDModelNameView(APIView):
     def get(self, request, name):
         try:
-            model = collection.find_one({name: name})
+            model = collection.find_one({'name': name})
             serializer = ThreeDModelSerializer(model)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
+        except Exception:
             return Response(
                 {"error": f"An error occurred while retrieving 3D model {name}."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

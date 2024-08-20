@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.urls import path
 from pathpalApp.views.enpoints_views import get_api
-from pathpalApp.views.three_d_views import ThreeDModelListView
+from pathpalApp.views.three_d_views import ThreeDModelListView, ThreeDModelNameView
 from pathpalApp.views.users_views import UserView, UserGetByEmailView
 
 
@@ -24,7 +24,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('api/', get_api, name="get_api"),
     path('api/3d-models/', ThreeDModelListView.as_view(), name="three_d_model_list"),
-    path('api/3d-models/<str:name>', ThreeDModelListView.as_view(), name="three_d_model_by_name"),
+    path('api/3d-models/<str:name>/', ThreeDModelNameView.as_view(), name="three_d_model_by_name"),
     path('api/users/', UserView.as_view(), name="user-view"),    
     path('api/users/<str:email>/', UserGetByEmailView.as_view(), name="user-by-email"),
 

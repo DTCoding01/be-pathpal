@@ -9,10 +9,14 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import sys
+import logging
 from pathlib import Path
 from decouple import config
 from pymongo import MongoClient
+
+
+logger = logging.getLogger(__name__)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -33,11 +37,35 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default="localhost,127.0.0.1,path-pal.he
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# MongoDB settings
-MONGO_DB_NAME = config('MONGO_DB_NAME')
+# dummy db for testing
+# settings.py
 MONGO_URI = config('MONGO_URI')
+   
+if 'test' in sys.argv[0]:
+    MONGO_DB_NAME = 'test_' + config('MONGO_DB_NAME', default='path_pal_db')
+    logger.info(f"Using test database: {MONGO_DB_NAME}")
+else:
+    MONGO_DB_NAME = config('MONGO_DB_NAME')
+    logger.info(f"Using production database: {MONGO_DB_NAME}")
+ 
+
+# MongoDB settings
 MONGO_CLIENT = MongoClient(MONGO_URI)
 MONGO_DB = MONGO_CLIENT[MONGO_DB_NAME]  
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': MONGO_DB_NAME,
+        'CLIENT': {
+            'host': MONGO_URI,
+            'port': 27017,
+            'username': config('MONGO_USERNAME', default=''),
+            'password': config('MONGO_PASSWORD', default=''),
+            'authSource': 'admin',
+        }
+    }
+}
 
 # Application definition
 

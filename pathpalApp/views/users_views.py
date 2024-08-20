@@ -2,8 +2,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..serializers import UserSerializer
-from django.conf import settings
-from pymongo import MongoClient
 from ..utils.db_connection import get_collection
 import logging
 
@@ -13,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 collection, client = get_collection('users')
 
-class UserCreateView(APIView):
+class UserView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         
@@ -38,7 +36,6 @@ class UserCreateView(APIView):
         logger.error(f"Serializer errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class UserListView(APIView):
     def get(self, request):
         try:
             users = list(collection.find({}))
@@ -46,4 +43,18 @@ class UserListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Error retrieving users: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+          
+class UserGetByEmailView(APIView):
+    def get(self, request, email):
+        
+        try:
+            user = collection.find_one({'email': email})
+            if user is None:
+                return Response({"error": "user not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error retrieving user: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

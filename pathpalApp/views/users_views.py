@@ -2,14 +2,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..serializers import UserSerializer
-from ..utils.db_connection import get_collection
+from ..utils.db_connection import MongoDBClient
 import logging
 
 logger = logging.getLogger(__name__)
 
 # Set up MongoDB client and database
 
-collection, client = get_collection('users')
+collection = MongoDBClient.get_collection('users')
 
 class UserView(APIView):
     def post(self, request):

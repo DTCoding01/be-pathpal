@@ -14,13 +14,15 @@ class ThreeDModelListView(APIView):
 
     def get(self, request):
         try:
+            # set up connection to DB and retrieve all models
             client = MongoClient(settings.MONGO_URI)
             db = client[settings.MONGO_DB_NAME]
             collection = db['three_d_models']
             models = list(collection.find())
+            # parse the model IDs into strings
             for model in models:
                 model['_id'] = str(model['_id'])
-
+            # serialize the MongoDB data into a dictionary
             serializer = ThreeDModelSerializer(models, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -30,6 +32,7 @@ class ThreeDModelListView(APIView):
                 {"error": "An error occurred while retrieving 3D models."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+            # close the MongoDB connection at the end of the process
         finally:
             if 'client' in locals():
                 client.close()

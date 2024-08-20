@@ -53,19 +53,14 @@ else:
 MONGO_CLIENT = MongoClient(MONGO_URI)
 MONGO_DB = MONGO_CLIENT[MONGO_DB_NAME]  
 
+# Remove the MongoDB-related settings
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': MONGO_DB_NAME,
-        'CLIENT': {
-            'host': MONGO_URI,
-            'port': 27017,
-            'username': config('MONGO_USERNAME', default=''),
-            'password': config('MONGO_PASSWORD', default=''),
-            'authSource': 'admin',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # Application definition
 

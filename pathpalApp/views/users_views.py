@@ -68,7 +68,7 @@ class UserGetByEmailView(APIView):
                 try:
                     updated_data = {'$set':serializer.validated_data}
                     collection.update_one({'email':email}, updated_data)
-                    updated_user = collections.find_one({'email':email})
+                    updated_user = collection.find_one({'email':email})
                     return Response(UserSerializer(updated_user).data, status=status.HTTP_200_OK)
                 except Exception as e:
                     logger.error(f"error updating user:{str(e)}")

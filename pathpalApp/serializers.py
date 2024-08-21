@@ -15,7 +15,7 @@ class ObjectIdField(serializers.Field):
 class ThreeDModelSerializer(serializers.Serializer):
     id = ObjectIdField(source='_id')
     name = serializers.CharField()
-    glb_file = serializers.CharField()
+    glb_id = serializers.CharField()
     category = serializers.CharField(allow_blank=True)
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()

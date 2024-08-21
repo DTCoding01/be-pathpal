@@ -40,7 +40,7 @@ class ThreeDModelNameView(APIView):
             if not model: 
                 return Response({'error': "Model not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            glb_id = model.get('glb_file')
+            glb_id = model.get('glb_id')
             
             response_content = {
                 'model': ThreeDModelSerializer(model).data,

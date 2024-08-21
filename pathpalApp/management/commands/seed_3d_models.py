@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from gridfs import GridFS
 from django.conf import settings
 from pathpalApp.models.three_d_models import ThreeDModel
+from pathpalApp.serializers import ThreeDModelSerializer
 
 class Command(BaseCommand):
     help = 'Seed the database with 3D models'
@@ -46,7 +47,9 @@ class Command(BaseCommand):
                         glb_id=glb_id,
                     )
                     
-                    result = db.three_d_models.insert_one(model.to_dict())
+                    serialized_data = ThreeDModelSerializer(model).data
+                    
+                    result = db.three_d_models.insert_one(serialized_data)
                     self.stdout.write(self.style.SUCCESS(f"Inserted {name} with ID: {result.inserted_id}"))
                     
                 except Exception as e:

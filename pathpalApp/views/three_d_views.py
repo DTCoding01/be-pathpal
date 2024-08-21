@@ -27,6 +27,7 @@ class ThreeDModelListView(APIView):
                 model['_id'] = str(model['_id'])
             serializer = ThreeDModelSerializer(models, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         except Exception as e:
             logger.exception("Error retrieving 3D models")
             return Response(

@@ -6,6 +6,7 @@ import pytest
 from pymongo import MongoClient
 from django.conf import settings
 from pathpalApp.models.three_d_models import ThreeDModel
+from pathpalApp.serializers import ThreeDModelSerializer
 
 @pytest.fixture(scope="function")
 def db_connection():
@@ -39,8 +40,10 @@ def setup_model(db_connection, sample_3d_model_data):
         name=sample_3d_model_data['name'],
         glb_id=glb_id,
     )
+    
+    serialized_data = ThreeDModelSerializer(model).data
 
-    collection.insert_one(model.to_dict())
+    collection.insert_one(serialized_data)
     
     yield {
         'db': db,
@@ -63,8 +66,10 @@ def test_insert_3d_model(db_connection, sample_3d_model_data):
         name=sample_3d_model_data['name'],
         glb_id=str(glb_id), 
     )
+    
+    serialized_data = ThreeDModelSerializer(model).data
 
-    result = collection.insert_one(model.to_dict())
+    result = collection.insert_one(serialized_data)
     inserted_id = result.inserted_id
 
     assert inserted_id is not None

@@ -10,16 +10,6 @@ class ThreeDModel:
         self.created_at = datetime.now(UTC)
         self.updated_at = datetime.now(UTC)
         
-    def to_dict(self):
-        return {
-            "_id": self._id,
-            "name": self.name,
-            "glb_id": self.glb_id,
-            "category": self.category,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
-        }
-        
     @classmethod
     def from_dict(cls, data):
         return cls(

@@ -1,58 +1,181 @@
 {
-    "endpoints": [
-      {
-        "method": "POST",
-        "path": "/api/user/create/",
-        "description": "Creates a new user in the system.",
-        "parameters": {
-          "body": {
-            "name": "string (required)",
-            "email": "string (required)"
-          }
-        },
-        "response": {
-          "status": "201 Created",
-          "body": {
-            "user_id": "ObjectId of the created user"
-          }
-        }
-      },
-      {
-        "method": "GET",
-        "path": "/api/user/<id>/",
-        "description": "Retrieves a user by their ID.",
-        "parameters": {
-          "path": {
-            "id": "string (required)"
-          }
-        },
-        "response": {
-          "status": "200 OK",
-          "body": {
-            "name": "User's name",
-            "email": "User's email",
-            "level": "User's level",
-            "step_details": {
-              "step_goal": "integer",
-              "total_steps": "integer",
-              "todays_steps": "integer"
-            },
-            "pet_details": {
-              "chosen_hat": "string",
-              "chosen_toy": "string",
-              "pet_name": "string",
-              "pet_breed": "string"
-            },
-            "items": [
-              {
-                "item_type": "string",
-                "item": "string",
-                "item_color": "string"
-              }
-            ]
-          }
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/users/",
+      "description": "Gets all users from the system",
+      "response": {
+        "status": "200 OK",
+        "body": {
+          "name": "User's name",
+          "email": "User's email",
+          "level": "User's level",
+          "step_details": {
+            "step_goal": "integer",
+            "total_steps": "integer",
+            "todays_steps": "integer"
+          },
+          "pet_details": {
+            "chosen_hat": "string",
+            "chosen_toy": "string",
+            "pet_name": "string",
+            "pet_breed": "string"
+          },
+          "items": [
+            {
+              "item_type": "string",
+              "item": "string",
+              "item_color": "string"
+            }
+          ]
         }
       }
-    ]
-  }
-  
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/",
+      "description": "Post new user to the database",
+      "required": {
+        "name": "string",
+        "email": "string",
+        "step_goal": "integer",
+        "selected_pet": "string"
+      },
+      "response": {
+        "status": "201 Successful Creation",
+        "body": {
+          "name": "User's name",
+          "email": "User's email",
+          "level": "User's level",
+          "step_details": {
+            "step_goal": "integer",
+            "total_steps": "integer",
+            "todays_steps": "integer"
+          },
+          "pet_details": {
+            "chosen_hat": "string",
+            "chosen_toy": "string",
+            "pet_name": "string",
+            "pet_breed": "string"
+          },
+          "items": [
+            {
+              "item_type": "string",
+              "item": "string",
+              "item_color": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/<email>",
+      "description": "Gets user by their email",
+      "response": {
+        "status": "200 OK",
+        "body": {
+          "name": "User's name",
+          "email": "User's email",
+          "level": "User's level",
+          "step_details": {
+            "step_goal": "integer",
+            "total_steps": "integer",
+            "todays_steps": "integer"
+          },
+          "pet_details": {
+            "chosen_hat": "string",
+            "chosen_toy": "string",
+            "pet_name": "string",
+            "pet_breed": "string"
+          },
+          "items": [
+            {
+              "item_type": "string",
+              "item": "string",
+              "item_color": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/<email>",
+      "description": "Patches any value on user object",
+      "example": {
+        "level": 2,
+        "step_details": {
+          "step_goal": 15000
+        },
+        "pet_details": {
+          "chosen_hat": "Wizard Hat"
+        }
+      },
+      "response": {
+        "status": "201 Successful Creation",
+        "body": {
+          "name": "User's name",
+          "email": "User's email",
+          "level": "User's level",
+          "step_details": {
+            "step_goal": "integer",
+            "total_steps": "integer",
+            "todays_steps": "integer"
+          },
+          "pet_details": {
+            "chosen_hat": "string",
+            "chosen_toy": "string",
+            "pet_name": "string",
+            "pet_breed": "string"
+          },
+          "items": [
+            {
+              "item_type": "string",
+              "item": "string",
+              "item_color": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/3d-models/",
+      "description": "Gets all 3d models from the system",
+      "response": {
+        "status": "200 OK",
+        "body": {
+          "_id": "string",
+          "name": "string",
+          "glb_id": "string",
+          "created_at": "datetime",
+          "updated_at": "datetime"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/3d-models/<name>",
+      "description": "Gets 3d model from the system by name",
+      "response": {
+        "status": "200 OK",
+        "body": {
+          "_id": "string",
+          "name": "string",
+          "glb_id": "string",
+          "created_at": "datetime",
+          "updated_at": "datetime"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/3d-models/files/<file_id>",
+      "description": "Download 3d model file by file_id",
+      "response": {
+        "status": "200 OK"
+      }
+    }
+  ]
+}

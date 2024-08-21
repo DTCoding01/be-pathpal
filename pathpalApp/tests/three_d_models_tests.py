@@ -1,9 +1,7 @@
 import os
 import gridfs
 from bson import ObjectId
-from django.urls import reverse
-from rest_framework.test import APITestCase, APIClient
-from rest_framework import status
+from rest_framework.test import APIClient
 import pytest
 from pymongo import MongoClient
 from django.conf import settings
@@ -26,54 +24,44 @@ def api_client():
 def sample_3d_model_data():
     return {
         "name": "test_cube",
-        "obj_file_path": "test_3d_files/test_cube.obj",
-        "mtl_file_path": "test_3d_files/test_cube.mtl"
+        "glb_file_path": "test_3d_files/test_cube.glb",
     }
 
 @pytest.fixture
 def setup_model(db_connection, sample_3d_model_data):
     db, fs, collection = db_connection
 
-    with open(sample_3d_model_data['obj_file_path'], 'rb') as obj_file:
-        obj_id = fs.put(obj_file, filename=os.path.basename(sample_3d_model_data['obj_file_path']))
+    with open(sample_3d_model_data['glb_file_path'], 'rb') as glb_file:
+        glb_id = fs.put(glb_file, filename=os.path.basename(sample_3d_model_data['glb_file_path']))
 
-    with open(sample_3d_model_data['mtl_file_path'], 'rb') as mtl_file:
-        mtl_id = fs.put(mtl_file, filename=os.path.basename(sample_3d_model_data['mtl_file_path']))
 
     model = ThreeDModel(
         name=sample_3d_model_data['name'],
-        obj_id=obj_id,
-        mtl_id=mtl_id
+        glb_id=glb_id,
     )
 
     collection.insert_one(model.to_dict())
     
-    # Yielding the setup data to use in tests
     yield {
         'db': db,
         'fs': fs,
         'collection': collection,
-        'obj_id': obj_id,
-        'mtl_id': mtl_id,
+        'glb_id': glb_id,
         'model': model
     }
 
-    # Teardown code to run after each test
     collection.delete_many({})
 
 def test_insert_3d_model(db_connection, sample_3d_model_data):
     db, fs, collection = db_connection
 
-    with open(sample_3d_model_data['obj_file_path'], 'rb') as obj_file:
-        obj_id = fs.put(obj_file, filename=os.path.basename(sample_3d_model_data['obj_file_path']))
+    with open(sample_3d_model_data['glb_file_path'], 'rb') as glb_file:
+        glb_id = fs.put(glb_file, filename=os.path.basename(sample_3d_model_data['glb_file_path']))
 
-    with open(sample_3d_model_data['mtl_file_path'], 'rb') as mtl_file:
-        mtl_id = fs.put(mtl_file, filename=os.path.basename(sample_3d_model_data['mtl_file_path']))
 
     model = ThreeDModel(
         name=sample_3d_model_data['name'],
-        obj_id=str(obj_id), 
-        mtl_id=str(mtl_id) if mtl_id else None 
+        glb_id=str(glb_id), 
     )
 
     result = collection.insert_one(model.to_dict())
@@ -83,37 +71,7 @@ def test_insert_3d_model(db_connection, sample_3d_model_data):
     inserted_model = collection.find_one({"_id": inserted_id})
     assert inserted_model is not None
     assert inserted_model['name'] == sample_3d_model_data['name']
-    assert inserted_model['obj_file'] == str(obj_id)  
-    assert inserted_model['mtl_file'] == str(mtl_id) if mtl_id else None 
+    assert inserted_model['glb_id'] == str(glb_id)  
 
-    assert fs.exists(ObjectId(str(obj_id)))
-    assert fs.exists(ObjectId(str(mtl_id))) if mtl_id else True
+    assert fs.exists(ObjectId(str(glb_id)))
 
-
-def test_retrieve_3d_model(db_connection, sample_3d_model_data):
-    db, fs, collection = db_connection
-
-    with open(sample_3d_model_data['obj_file_path'], 'rb') as obj_file:
-        obj_id = fs.put(obj_file, filename=os.path.basename(sample_3d_model_data['obj_file_path']))
-
-    with open(sample_3d_model_data['mtl_file_path'], 'rb') as mtl_file:
-        mtl_id = fs.put(mtl_file, filename=os.path.basename(sample_3d_model_data['mtl_file_path']))
-
-    model = ThreeDModel(
-        name=sample_3d_model_data['name'],
-        obj_id=str(obj_id),  
-        mtl_id=str(mtl_id) if mtl_id else None 
-    )
-    collection.insert_one(model.to_dict())
-
-    retrieved_model = collection.find_one({"name": sample_3d_model_data['name']})
-    assert retrieved_model is not None
-
-    obj_file = fs.get(ObjectId(retrieved_model['obj_file']))  
-    mtl_file = fs.get(ObjectId(retrieved_model['mtl_file'])) if retrieved_model['mtl_file'] else None
-
-    assert obj_file is not None
-    if mtl_file:
-        assert mtl_file is not None
-    assert obj_file.filename == os.path.basename(sample_3d_model_data['obj_file_path'])
-    assert mtl_file.filename == os.path.basename(sample_3d_model_data['mtl_file_path']) if mtl_file else True

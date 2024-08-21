@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from ..serializers import ThreeDModelSerializer
 from ..utils.db_connection import MongoDBClient
+from django.http import FileResponse
 
 
 logger = logging.getLogger(__name__)
@@ -59,9 +60,15 @@ class FileDownloadView(APIView):
     def get(self, request, file_id):
         try:
             file = fs.get(ObjectId(file_id))
-            response = Response(file.read(), content_type='application/octet-stream')
+            response = FileResponse(file, content_type='application/octet-stream')
             response['Content-Disposition'] = f'attachment; filename={file.filename}'
             return response
+        except gridfs.NoFile:
+            logger.exception(f"File with ID '{file_id}' not found")
+            return Response(
+                {"error": "File not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
             logger.exception(f"Error retrieving file with ID '{file_id}'")
             return Response(

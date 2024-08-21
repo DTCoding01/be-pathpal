@@ -60,8 +60,8 @@ class FileDownloadView(APIView):
     def get(self, request, file_id):
         try:
             file = fs.get(ObjectId(file_id))
-            response = FileResponse(file, content_type='application/octet-stream')
-            response['Content-Disposition'] = f'attachment; filename={file.filename}'
+            response = FileResponse(file, content_type='model/gltf-binary')
+            response['Content-Disposition'] = f'inline; filename={file.filename}'
             return response
         except gridfs.NoFile:
             logger.exception(f"File with ID '{file_id}' not found")

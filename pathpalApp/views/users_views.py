@@ -44,8 +44,7 @@ class UserView(APIView):
         except Exception as e:
             logger.error(f"Error retrieving users: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-          
+
 class UserGetByEmailView(APIView):
     def get(self, request, email):
         
@@ -58,3 +57,21 @@ class UserGetByEmailView(APIView):
         except Exception as e:
             logger.error(f"Error retrieving user: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def patch(self, request, email):
+        try:
+            user = collection.find_one({"email": email})
+            if user is None:
+                return Response({"error':'user not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                try:
+                    updated_data = {'$set':serializer.validated_data}
+                    collection.update_one({'email':email}, updated_data)
+                    updated_user = collections.find_one({'email':email})
+                    return Response(UserSerializer(updated_user).data, status=status.HTTP_200_OK)
+                except Exception as e:
+                    logger.error(f"error updating user:{str(e)}")
+                    return Response({'error':str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:   
+             return Response({'error':str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

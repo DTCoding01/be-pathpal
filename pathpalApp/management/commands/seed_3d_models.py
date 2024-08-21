@@ -31,26 +31,19 @@ class Command(BaseCommand):
 
         models_folder = 'test_3d_files'
         
-        self.stdout.write(f"Current working directory: {os.getcwd()}")
-        self.stdout.write(f"Full path of models folder: {os.path.abspath(models_folder)}")
         
         for filename in os.listdir(models_folder):
-            if filename.endswith('.obj'):
+            if filename.endswith('.glb'):
                 try:
                     name = os.path.splitext(filename)[0]
-                    obj_file_path = os.path.join(models_folder, filename)
-                    mtl_file_path = os.path.join(models_folder, f"{name}.mtl")
+                    glb_file_path = os.path.join(models_folder, filename)
                     
-                    obj_id = upload_file_to_gridfs(obj_file_path)
+                    glb_id = upload_file_to_gridfs(glb_file_path)
                     
-                    mtl_id = None
-                    if os.path.exists(mtl_file_path):
-                        mtl_id = upload_file_to_gridfs(mtl_file_path)
                     
                     model = ThreeDModel(
                         name=name,
-                        obj_id=obj_id,
-                        mtl_id=mtl_id
+                        glb_id=glb_id,
                     )
                     
                     result = db.three_d_models.insert_one(model.to_dict())

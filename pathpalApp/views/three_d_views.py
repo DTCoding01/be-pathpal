@@ -42,11 +42,11 @@ class ThreeDModelNameView(APIView):
             if not model: 
                 return Response({'error': "Model not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            glb_id = model.get('glb_id')
+            file_name = model.get('file_name')
             
             response_content = {
                 'model': ThreeDModelSerializer(model).data,
-                'glb_file_url': f'/api/3d-models/files/{glb_id}.glb' if glb_id else None,
+                'glb_file_url': f'/api/3d-models/files/{file_name}.glb' if file_name else None,
             }
             
             return Response(response_content, status=status.HTTP_200_OK)

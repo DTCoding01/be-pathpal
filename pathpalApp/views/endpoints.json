@@ -148,7 +148,7 @@
         "body": {
           "_id": "string",
           "name": "string",
-          "glb_id": "string",
+          "file_name": "string",
           "created_at": "datetime",
           "updated_at": "datetime"
         }
@@ -163,7 +163,7 @@
         "body": {
           "_id": "string",
           "name": "string",
-          "glb_id": "string",
+          "file_name": "string",
           "created_at": "datetime",
           "updated_at": "datetime"
         }

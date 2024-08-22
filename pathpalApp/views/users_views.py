@@ -44,6 +44,15 @@ class UserView(APIView):
         except Exception as e:
             logger.error(f"Error retrieving users: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+def deep_update(original, updates):
+        for key, value in updates.items():
+            if key in original:
+
+                if isinstance(value, dict) and isinstance(original[key], dict):
+                    deep_update(original[key], value)
+                else:
+                    original[key] = value
+        return original 
 
 class UserGetByEmailView(APIView):
     def get(self, request, email):
@@ -58,16 +67,17 @@ class UserGetByEmailView(APIView):
             logger.error(f"Error retrieving user: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    
     def patch(self, request, email):
         try:
             user = collection.find_one({"email": email})
             if user is None:
-                return Response({"error':'user not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"error":"user not found"}, status=status.HTTP_404_NOT_FOUND)
             serializer = UserSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 try:
-                    updated_data = {'$set':serializer.validated_data}
-                    collection.update_one({'email':email}, updated_data)
+                    updated_data = deep_update(user, serializer.validated_data)
+                    collection.update_one({'email':email}, {'$set':updated_data})
                     updated_user = collection.find_one({'email':email})
                     return Response(UserSerializer(updated_user).data, status=status.HTTP_200_OK)
                 except Exception as e:

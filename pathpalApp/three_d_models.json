@@ -1,0 +1,22 @@
+{
+  "models": [
+    {
+      "name": "dog",
+      "file_name": "dog.glb",
+      "category": "pet",
+      "description": "a dog"
+    },
+    {
+      "name": "cat",
+      "file_name": "cat.glb",
+      "category": "pet",
+      "description": "a cat"
+    },
+    {
+      "name": "bone",
+      "file_name": "bone.glb",
+      "category": "toy",
+      "description": "a toy"
+    }
+  ]
+}

@@ -29,8 +29,17 @@ class UserSerializer(serializers.Serializer):
     collected_items = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True)
 
     def to_internal_value(self, data):
-        if 'step_goal' in data:
-            data['step_details'] = {'step_goal': data.pop('step_goal')}
-        if 'selected_pet' in data:
-            data['pet_details'] = {'selected_pet': data.pop('selected_pet')}
+        step_details = data.get('step_details', {})
+        step_details['step_goal'] = data.pop('step_goal', step_details.get('step_goal', 0))
+        step_details.setdefault('total_steps', 0)
+        step_details.setdefault('todays_steps', 0)
+        data['step_details'] = step_details
+        
+        pet_details = data.get('pet_details', {})
+        pet_details.setdefault('pet_name', '')
+        pet_details['selected_pet'] = data.pop('selected_pet', pet_details.get('selected_pet', ''))
+        pet_details.setdefault('selected_hat', '')
+        pet_details.setdefault('selected_toy', '')
+        data['pet_details'] = pet_details
+
         return super().to_internal_value(data)

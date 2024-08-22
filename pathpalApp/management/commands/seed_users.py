@@ -15,7 +15,7 @@ class Command(BaseCommand):
             users_data = json.load(file)
         
         # Get the MongoDB collection using the MongoDBClient
-        users_collection = MongoDBClient.get_collection('users')  # 'users' is the collection name
+        users_collection = MongoDBClient.get_collection('users')
 
         # Loop over the users data and insert into MongoDB
         for user_data in users_data: 

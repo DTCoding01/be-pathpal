@@ -6,9 +6,6 @@ from ..utils.db_connection import MongoDBClient
 import logging
 
 logger = logging.getLogger(__name__)
-
-# Set up MongoDB client and database
-
 collection = MongoDBClient.get_collection('users')
 
 class UserView(APIView):
@@ -18,11 +15,9 @@ class UserView(APIView):
         if serializer.is_valid():
             user_data = serializer.validated_data
             try:
-                # Insert the user data into MongoDB
                 inserted_id = collection.insert_one(user_data).inserted_id
-                
-                # Verify the user was actually inserted
                 inserted_user = collection.find_one({"_id": inserted_id})
+                
                 if inserted_user:
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 else:
@@ -44,6 +39,8 @@ class UserView(APIView):
         except Exception as e:
             logger.error(f"Error retrieving users: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 def deep_update(original, updates):
         for key, value in updates.items():
             if key in original:

@@ -2,19 +2,20 @@ from datetime import datetime, UTC
 from bson import ObjectId
 
 class ThreeDModel:
-    def __init__(self, name, glb_id, category="", _id=None):
+    def __init__(self, name, file_name, description="", category="", _id=None):
         self._id = ObjectId() if _id is None else ObjectId(_id)
         self.name = name
-        self.glb_id = str(glb_id)
+        self.file_name = file_name
+        self.description = description
         self.category = category
         self.created_at = datetime.now(UTC)
-        self.updated_at = datetime.now(UTC)
         
     @classmethod
     def from_dict(cls, data):
         return cls(
             name=data['name'],
-            glb_id=data['glb_id'],
+            file_name=data['file_name'],
             category=data.get('category', ""),
-            _id=data.get('_id')
-        )
+            description=data.get('description', '')
+        )    
+   

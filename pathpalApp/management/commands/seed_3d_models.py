@@ -36,7 +36,6 @@ class Command(BaseCommand):
             base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
             
             json_file_path = os.path.join(base_dir, 'three_d_models.json')
-            print(json_file_path)
         
         try:
             with open(json_file_path, 'r') as file:

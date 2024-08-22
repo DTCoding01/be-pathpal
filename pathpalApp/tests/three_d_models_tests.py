@@ -33,12 +33,12 @@ def setup_model(db_connection, sample_3d_model_data):
     db, fs, collection = db_connection
 
     with open(sample_3d_model_data['glb_file_path'], 'rb') as glb_file:
-        glb_id = fs.put(glb_file, filename=os.path.basename(sample_3d_model_data['glb_file_path']))
+        file_name = fs.put(glb_file, filename=os.path.basename(sample_3d_model_data['glb_file_path']))
 
 
     model = ThreeDModel(
         name=sample_3d_model_data['name'],
-        glb_id=glb_id,
+        file_name=file_name,
     )
     
     serialized_data = ThreeDModelSerializer(model).data
@@ -49,8 +49,9 @@ def setup_model(db_connection, sample_3d_model_data):
         'db': db,
         'fs': fs,
         'collection': collection,
-        'glb_id': glb_id,
-        'model': model
+        'file_name': file_name,
+        'model': model,
+        
     }
 
     collection.delete_many({})
@@ -59,12 +60,12 @@ def test_insert_3d_model(db_connection, sample_3d_model_data):
     db, fs, collection = db_connection
 
     with open(sample_3d_model_data['glb_file_path'], 'rb') as glb_file:
-        glb_id = fs.put(glb_file, filename=os.path.basename(sample_3d_model_data['glb_file_path']))
+        file_name = fs.put(glb_file, filename=os.path.basename(sample_3d_model_data['glb_file_path']))
 
 
     model = ThreeDModel(
         name=sample_3d_model_data['name'],
-        glb_id=str(glb_id), 
+        file_name=str(file_name), 
     )
     
     serialized_data = ThreeDModelSerializer(model).data
@@ -76,7 +77,7 @@ def test_insert_3d_model(db_connection, sample_3d_model_data):
     inserted_model = collection.find_one({"_id": inserted_id})
     assert inserted_model is not None
     assert inserted_model['name'] == sample_3d_model_data['name']
-    assert inserted_model['glb_id'] == str(glb_id)  
+    assert inserted_model['file_name'] == str(file_name)  
 
-    assert fs.exists(ObjectId(str(glb_id)))
+    assert fs.exists(ObjectId(str(file_name)))
 

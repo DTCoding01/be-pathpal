@@ -1,4 +1,5 @@
 import os
+import json
 from django.core.management.base import BaseCommand
 from pymongo import MongoClient
 from django.conf import settings
@@ -14,35 +15,45 @@ class Command(BaseCommand):
             action='store_true',
             help='Clear existing 3D models before seeding',
         )
+        parser.add_argument(
+            '--file',
+            type=str,
+            help='The JSON file containing 3D models data',
+        )
 
     def handle(self, *args, **options):
         client = MongoClient(settings.MONGO_URI)
         db = client[settings.MONGO_DB_NAME]
 
-
+        # Clear existing 3D models if the --clear option is provided
         if options['clear']:
             self.stdout.write(self.style.WARNING('Clearing existing 3D models...'))
             db.three_d_models.delete_many({})
-        
-        if options['file']:
-            json_file_path = options['file']
-        else:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            json_file_path = os.path.join(base_dir, 'pathpalApp','three_d_models.json')
 
+        json_file_path = options.get('file')
+        if not json_file_path:
+            
+            base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            
+            json_file_path = os.path.join(base_dir, 'three_d_models.json')
+            print(json_file_path)
+        
         try:
-            with open(json_file_path,'r') as file:
-                models_data=json.load(file)
+            with open(json_file_path, 'r') as file:
+                data = json.load(file)
+                models_data = data.get('models', [])
+
             for model_data in models_data:
                 try:
-                    model=ThreeDModel.from_dict(model_data)
-                    serialized_data=ThreeDModelSerializer(model).data
-                    result=db.three_d_models.insert_one(serialized_data)
-                    self.stdout.write(self.style.SUCCESS(f'Inserted{model.name}'))
+                    model = ThreeDModel.from_dict(model_data)
+                    serialized_data = ThreeDModelSerializer(model).data
+                    result = db.three_d_models.insert_one(serialized_data)
+                    self.stdout.write(self.style.SUCCESS(f'Inserted {model.name} with ID: {result.inserted_id}'))
                 except Exception as e:
-                    self.stdout.write(self.style.ERROR(f'Error inserting model{model.name}'))
+                    self.stdout.write(self.style.ERROR(f'Error inserting model: {str(e)}'))
+
         except Exception as e:
-                    self.stdout.write(self.style.ERROR(f'Error reading json file'))
-        
+            self.stdout.write(self.style.ERROR(f'Error reading JSON file: {str(e)}'))
+
         client.close()
         self.stdout.write(self.style.SUCCESS('Successfully seeded 3D models'))

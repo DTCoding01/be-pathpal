@@ -15,7 +15,7 @@ class ThreeDModel:
         return cls(
             name=data['name'],
             file_name=data['file_name'],
-            category=data.get('category', ""),
-            description=data.get('description', '')
+            category=data['category'],
+            description=data['description']
         )    
    

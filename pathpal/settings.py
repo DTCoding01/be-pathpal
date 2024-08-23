@@ -33,7 +33,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default="localhost,127.0.0.1,path-pal.herokuapp.com,path-pal-1faa351bcfa7.herokuapp.com", cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default="localhost,127.0.0.1,path-pal.herokuapp.com,path-pal-1faa351bcfa7.herokuapp.com,0.0.0.0", cast=lambda v: [s.strip() for s in v.split(',')])
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 

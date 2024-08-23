@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.urls import path
 from pathpalApp.views.enpoints_views import get_api
-from pathpalApp.views.three_d_views import ThreeDModelListView, ThreeDModelNameView, FileDownloadView
+from pathpalApp.views.three_d_views import ThreeDModelListView, ThreeDModelNameView
 from pathpalApp.views.users_views import UserView, UserGetByEmailView
 
 

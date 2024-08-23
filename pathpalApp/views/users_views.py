@@ -42,18 +42,16 @@ class UserView(APIView):
 
 
 def deep_update(original, updates):
-        for key, value in updates.items():
-            if key in original:
-
-                if isinstance(value, dict) and isinstance(original[key], dict):
-                    deep_update(original[key], value)
-                else:
-                    original[key] = value
-        return original 
+    for key, value in updates.items():
+        if isinstance(value, dict):
+            original[key] = deep_update(original.get(key, {}), value)
+        else:
+            original[key] = value
+    return original 
 
 class UserGetByEmailView(APIView):
     def get(self, request, email):
-        
+        collection = MongoDBClient.get_collection('users')
         try:
             user = collection.find_one({'email': email})
             if user is None:
@@ -64,12 +62,13 @@ class UserGetByEmailView(APIView):
             logger.error(f"Error retrieving user: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    
     def patch(self, request, email):
+        collection = MongoDBClient.get_collection('users')
         try:
             user = collection.find_one({"email": email})
             if user is None:
                 return Response({"error":"user not found"}, status=status.HTTP_404_NOT_FOUND)
+            
             serializer = UserSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 try:
@@ -78,7 +77,10 @@ class UserGetByEmailView(APIView):
                     updated_user = collection.find_one({'email':email})
                     return Response(UserSerializer(updated_user).data, status=status.HTTP_200_OK)
                 except Exception as e:
-                    logger.error(f"error updating user:{str(e)}")
+                    logger.error(f"error updating user: {str(e)}")
                     return Response({'error':str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:   
+             logger.error(f"Error in PATCH operation: {str(e)}")
              return Response({'error':str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

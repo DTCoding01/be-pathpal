@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from bson import ObjectId
+from datetime import datetime
 
 class ObjectIdField(serializers.Field):
     """Custom field to handle MongoDB ObjectId serialization and deserialization."""
+    
     def to_representation(self, value):
         return str(value) if isinstance(value, ObjectId) else value
 
@@ -13,12 +15,17 @@ class ObjectIdField(serializers.Field):
             raise serializers.ValidationError("Invalid ObjectId")
 
 class ThreeDModelSerializer(serializers.Serializer):
-    id = ObjectIdField(source='_id')
+    id = ObjectIdField(source='_id', required=False)  
     name = serializers.CharField()
     file_name = serializers.CharField()
     category = serializers.CharField(allow_blank=True)
     description = serializers.CharField(allow_blank=True)
-    created_at = serializers.DateTimeField()
+    created_at = serializers.DateTimeField(required=False)  
+
+    def create(self, validated_data):
+        validated_data['_id'] = validated_data.get('_id', ObjectId()) 
+        validated_data['created_at'] = validated_data.get('created_at', datetime.utcnow()) 
+        return validated_data
 
 class UserSerializer(serializers.Serializer):
     id = ObjectIdField(source='_id', read_only=True)

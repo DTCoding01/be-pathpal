@@ -16,7 +16,6 @@ class ThreeDModelListView(APIView):
     def get(self, request):
         try:
             models = list(collection.find())
-            # Convert ObjectId to string for serialization
             for model in models:
                 model['_id'] = str(model['_id'])
             serializer = ThreeDModelSerializer(models, many=True)

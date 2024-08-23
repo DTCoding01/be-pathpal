@@ -16,7 +16,19 @@
       "name": "bone",
       "file_name": "bone.glb",
       "category": "toy",
-      "description": "a toy"
+      "description": "a bone"
+    },
+    {
+      "name": "snack_holder",
+      "file_name": "snack_holder.glb",
+      "category": "toy",
+      "description": "a snack holder"
+    },
+    {
+      "name": "ball_thrower",
+      "file_name": "ball_thrower.glb",
+      "category": "toy",
+      "description": "a ball thrower"
     }
   ]
 }

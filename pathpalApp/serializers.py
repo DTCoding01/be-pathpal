@@ -23,9 +23,16 @@ class ThreeDModelSerializer(serializers.Serializer):
     created_at = serializers.DateTimeField(required=False)  
     color = serializers.CharField()
 
+    def to_representation(self,instance):
+        representation = super().to_representation(instance)
+        if "created_at" not in representation or not representation['created_at']:
+            representation['created_at'] = datetime.now(timezone.utc)
+        return representation
+
+
     def create(self, validated_data):
         validated_data['_id'] = validated_data.get('_id', ObjectId()) 
-        validated_data['created_at'] = validated_data.get('created_at', datetime.utcnow()) 
+        validated_data['created_at'] = validated_data.get('created_at', datetime.now(timezone.utc)) 
         return validated_data
 
 class UserSerializer(serializers.Serializer):

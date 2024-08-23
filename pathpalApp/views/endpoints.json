@@ -168,14 +168,6 @@
           "updated_at": "datetime"
         }
       }
-    },
-    {
-      "method": "GET",
-      "path": "/api/3d-models/files/<file_id>",
-      "description": "Download 3d model file by file_id",
-      "response": {
-        "status": "200 OK"
-      }
     }
   ]
 }

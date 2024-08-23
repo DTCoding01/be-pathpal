@@ -3,7 +3,6 @@ import json
 from django.core.management.base import BaseCommand
 from pymongo import MongoClient
 from django.conf import settings
-from pathpalApp.models.three_d_models import ThreeDModel
 from pathpalApp.serializers import ThreeDModelSerializer
 
 class Command(BaseCommand):
@@ -25,16 +24,13 @@ class Command(BaseCommand):
         client = MongoClient(settings.MONGO_URI)
         db = client[settings.MONGO_DB_NAME]
 
-        # Clear existing 3D models if the --clear option is provided
         if options['clear']:
             self.stdout.write(self.style.WARNING('Clearing existing 3D models...'))
             db.three_d_models.delete_many({})
 
         json_file_path = options.get('file')
         if not json_file_path:
-            
             base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-            
             json_file_path = os.path.join(base_dir, 'three_d_models.json')
         
         try:
@@ -44,10 +40,14 @@ class Command(BaseCommand):
 
             for model_data in models_data:
                 try:
-                    model = ThreeDModel.from_dict(model_data)
-                    serialized_data = ThreeDModelSerializer(model).data
-                    result = db.three_d_models.insert_one(serialized_data)
-                    self.stdout.write(self.style.SUCCESS(f'Inserted {model.name} with ID: {result.inserted_id}'))
+                    serializer = ThreeDModelSerializer(data=model_data)
+                    if serializer.is_valid():
+                        serialized_data = serializer.validated_data
+                        result = db.three_d_models.insert_one(serialized_data)
+                        self.stdout.write(self.style.SUCCESS(f'Inserted {model_data["name"]} with ID: {result.inserted_id}'))
+                    else:
+                        self.stdout.write(self.style.ERROR(f'Validation failed for model {model_data.get("name", "unknown")}: {serializer.errors}'))
+                        
                 except Exception as e:
                     self.stdout.write(self.style.ERROR(f'Error inserting model: {str(e)}'))
 

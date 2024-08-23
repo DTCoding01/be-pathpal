@@ -44,17 +44,19 @@ class UserSerializer(serializers.Serializer):
     collected_items = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True)
 
     def to_internal_value(self, data):
-        if 'step_details' in data:
-            step_details = data['step_details']
-            step_details['step_goal'] = step_details.get('step_goal', 0)
-            step_details.setdefault('total_steps', 0)
-            step_details.setdefault('todays_steps', 0)
-        if 'pet_details' in data:
-            pet_details = data['pet_details']
-            pet_details['selected_pet'] = pet_details.get('selected_pet', '')
-            pet_details.setdefault('pet_name', '')
-            pet_details.setdefault('selected_hat', '')
-            pet_details.setdefault('selected_toy', '')
+        data['step_details'] = data.get('step_details', {})
+        data['step_details']['step_goal'] = data['step_details'].get('step_goal', 0)
+        data['step_details'].setdefault('total_steps', 0)
+        data['step_details'].setdefault('todays_steps', 0)
+
+        data['pet_details'] = data.get('pet_details', {})
+        data['pet_details']['selected_pet'] = data['pet_details'].get('selected_pet', '')
+        data['pet_details'].setdefault('pet_name', '')
+        data['pet_details'].setdefault('selected_hat', '')
+        data['pet_details'].setdefault('selected_toy', '')
+        
+        data['collected_items'] = data.get('collected_items', [])
+
         return super().to_internal_value(data)
 
     def to_representation(self, instance):

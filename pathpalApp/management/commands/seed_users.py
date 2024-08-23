@@ -1,16 +1,28 @@
+import json
+import os
 from django.core.management.base import BaseCommand
 from ...serializers import UserSerializer
 from ...utils.db_connection import MongoDBClient
-import json
+
 
 class Command(BaseCommand):
     help = 'Seed the database with test users'
     
     def add_arguments(self, parser):
-        parser.add_argument('file_path', type=str, help='Path to the JSON file containing user data')
+       
+        parser.add_argument(
+            '--file',
+            type=str,
+            help='The JSON file containing users data',
+        )
 
     def handle(self, *args, **options):
-        file_path = options['file_path']
+        if options['file']:
+            file_path = options['file_path']
+        else:
+            base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            file_path = os.path.join(base_dir, 'test_users.json')
+            
         
         with open(file_path, 'r') as file:
             users_data = json.load(file)

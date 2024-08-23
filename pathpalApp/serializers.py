@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from bson import ObjectId
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ObjectIdField(serializers.Field):
     """Custom field to handle MongoDB ObjectId serialization and deserialization."""

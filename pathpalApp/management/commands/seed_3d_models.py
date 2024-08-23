@@ -38,7 +38,8 @@ class Command(BaseCommand):
                 try:
                     serializer = ThreeDModelSerializer(data=model_data)
                     if serializer.is_valid():
-                        serialized_data = serializer.validated_data
+                        serialized_data = serializer.create(serializer.validated_data)
+                        print(serialized_data)
                         result = db.three_d_models.insert_one(serialized_data)
                         self.stdout.write(self.style.SUCCESS(f'Inserted {model_data["name"]} with ID: {result.inserted_id}'))
                     else:

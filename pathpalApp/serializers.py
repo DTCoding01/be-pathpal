@@ -37,6 +37,8 @@ class UserSerializer(serializers.Serializer):
     id = ObjectIdField(source='_id', read_only=True)
     name = serializers.CharField()
     email = serializers.EmailField()
+    level = serializers.IntegerField(default=1)
+    xp = serializers.IntegerField(default=0)
     step_details = serializers.DictField(required=False)
     pet_details = serializers.DictField(required=False)
     collected_items = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True)

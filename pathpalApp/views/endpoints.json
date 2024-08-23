@@ -10,6 +10,7 @@
           "name": "User's name",
           "email": "User's email",
           "level": "User's level",
+          "xp": "User's XP",
           "step_details": {
             "step_goal": "integer",
             "total_steps": "integer",

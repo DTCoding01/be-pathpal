@@ -4,31 +4,36 @@
       "name": "dog",
       "file_name": "dog.glb",
       "category": "pet",
-      "description": "a dog"
+      "description": "a dog",
+      "color": "grey"
     },
     {
       "name": "cat",
       "file_name": "cat.glb",
       "category": "pet",
-      "description": "a cat"
+      "description": "a cat",
+      "color": "brown"
     },
     {
       "name": "bone",
       "file_name": "bone.glb",
       "category": "toy",
-      "description": "a bone"
+      "description": "a bone",
+      "color": "white"
     },
     {
       "name": "snack_holder",
       "file_name": "snack_holder.glb",
       "category": "toy",
-      "description": "a snack holder"
+      "description": "a snack holder",
+      "color": "green"
     },
     {
       "name": "ball_thrower",
       "file_name": "ball_thrower.glb",
       "category": "toy",
-      "description": "a ball thrower"
+      "description": "a ball thrower",
+      "color": "blue"
     }
   ]
 }

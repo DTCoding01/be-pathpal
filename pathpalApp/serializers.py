@@ -21,6 +21,7 @@ class ThreeDModelSerializer(serializers.Serializer):
     category = serializers.CharField(allow_blank=True)
     description = serializers.CharField(allow_blank=True)
     created_at = serializers.DateTimeField(required=False)  
+    color = serializers.CharField()
 
     def create(self, validated_data):
         validated_data['_id'] = validated_data.get('_id', ObjectId()) 

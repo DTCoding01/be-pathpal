@@ -9,11 +9,7 @@ class Command(BaseCommand):
     help = 'Seed the database with 3D models'
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            '--clear',
-            action='store_true',
-            help='Clear existing 3D models before seeding',
-        )
+       
         parser.add_argument(
             '--file',
             type=str,
@@ -24,9 +20,9 @@ class Command(BaseCommand):
         client = MongoClient(settings.MONGO_URI)
         db = client[settings.MONGO_DB_NAME]
 
-        if options['clear']:
-            self.stdout.write(self.style.WARNING('Clearing existing 3D models...'))
-            db.three_d_models.delete_many({})
+       
+        self.stdout.write(self.style.WARNING('Clearing existing 3D models...'))
+        db.three_d_models.delete_many({})
 
         json_file_path = options.get('file')
         if not json_file_path:

@@ -1,6 +1,5 @@
 import pytest
 import json
-from unittest.mock import patch
 from bson import ObjectId
 from django.core.management import call_command
 from pymongo import MongoClient
@@ -9,13 +8,14 @@ from rest_framework.test import APIRequestFactory, APITestCase
 from rest_framework import status
 from pathpalApp.views.three_d_views import ThreeDModelListView, ThreeDModelNameView
 
-
 @pytest.fixture(scope="function")
 def db_connection():
     client = MongoClient(settings.MONGO_URI)
     db = client[settings.MONGO_DB_NAME]
     collection = db['three_d_models']
+    collection.delete_many({}) 
     yield db, collection
+    collection.delete_many({}) 
     client.close()
 
 def test_seed_3d_models(db_connection, tmpdir):
@@ -29,18 +29,20 @@ def test_seed_3d_models(db_connection, tmpdir):
                 "file_name": "test_cube.glb",
                 "category": "test_category",
                 "description": "A test cube model",
+                "color": "red",
             },
             {
                 "name": "test_sphere",
                 "file_name": "test_sphere.glb",
                 "category": "test_category",
                 "description": "A test sphere model",
+                "color": "red",
             }
         ]
     }
     json_file.write(json.dumps(test_data))
 
-    call_command('seed_3d_models', '--file', str(json_file), '--clear')
+    call_command('seed_3d_models', '--file', str(json_file))
 
     assert collection.count_documents({}) == 2
     assert collection.find_one({"name": "test_cube"}) is not None
@@ -49,13 +51,20 @@ def test_seed_3d_models(db_connection, tmpdir):
 class ThreeDModelViewTests(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
+        self.client = MongoClient(settings.MONGO_URI)
+        self.db = self.client[settings.MONGO_DB_NAME]
+        self.collection = self.db['three_d_models']
+        self.collection.delete_many({}) 
 
-    @patch('pathpalApp.views.three_d_views.collection.find')
-    def test_get_all_models_success(self, mock_find):
-        mock_find.return_value = [
-            {"_id": ObjectId(), "name": "Model1", "file_name": "model1.glb", "description": "", "category": "test"},
-            {"_id": ObjectId(), "name": "Model2", "file_name": "model2.glb", "description": "", "category": "test"},
-        ]
+    def tearDown(self):
+        self.collection.delete_many({})  
+        self.client.close()
+
+    def test_get_all_models_success(self):
+        self.collection.insert_many([
+            {"name": "Model1", "file_name": "model1.glb", "description": "", "category": "test", "color": "red"},
+            {"name": "Model2", "file_name": "model2.glb", "description": "", "category": "test", "color": "red"},
+        ])
 
         request = self.factory.get('/api/3d-models/')
         response = ThreeDModelListView.as_view()(request)
@@ -65,15 +74,14 @@ class ThreeDModelViewTests(APITestCase):
         self.assertEqual(response.data[0]['name'], 'Model1')
         self.assertEqual(response.data[1]['name'], 'Model2')
 
-    @patch('pathpalApp.views.three_d_views.collection.find_one')
-    def test_get_model_by_name_success(self, mock_find_one):
-        mock_find_one.return_value = {
-            "_id": ObjectId(),
+    def test_get_model_by_name_success(self):
+        self.collection.insert_one({
             "name": "Model1",
             "file_name": "model1.glb",
             "description": "",
-            "category": "test"
-        }
+            "category": "test",
+            "color": "red",
+        })
 
         request = self.factory.get('/api/3d-models/Model1/')
         response = ThreeDModelNameView.as_view()(request, name='Model1')
@@ -81,10 +89,7 @@ class ThreeDModelViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['model']['name'], 'Model1')
 
-    @patch('pathpalApp.views.three_d_views.collection.find_one')
-    def test_get_model_by_name_not_found(self, mock_find_one):
-        mock_find_one.return_value = None
-
+    def test_get_model_by_name_not_found(self):
         request = self.factory.get('/api/3d-models/NonExistentModel/')
         response = ThreeDModelNameView.as_view()(request, name='NonExistentModel')
 
